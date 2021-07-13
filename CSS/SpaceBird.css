@@ -20,7 +20,7 @@ body {
     font-size: 20px;
 }
 
-.conteudo {
+.content {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -37,14 +37,14 @@ body {
     overflow: hidden;
 }
 
-.passaro {
+.bird {
     position: absolute;
     width: 60px;
     left: calc(50% - 30px);
     bottom: 50%;
 }
 
-.par-de-barreiras {
+.pair-of-barriers {
     position: absolute;
     top: 0;
     height: 100%;
@@ -53,20 +53,20 @@ body {
     justify-content: space-between;
 }
 
-.barreira {
+.barrier {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.barreira .borda {
+.barrier .cover {
     height: 30px;
     width: 130px;
     background: linear-gradient(90deg, #639301, #A5E82E);
     border: 2px solid #000;
 }
 
-.barreira .corpo {
+.barrier .shape {
     height: 150px;
     width: 110px;
     background: linear-gradient(90deg, #639301, #A5E82E);
@@ -74,7 +74,7 @@ body {
     border-right: 2px solid #000;
 }
 
-.progresso {
+.progress {
     position: absolute;
     top: 10px;
     right: 10px;
