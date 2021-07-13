@@ -44,5 +44,41 @@ function PairOfBarriers(height, opening, x) {
     this.setX(x)
 }
 
-const b = new PairOfBarriers(700, 200, 400)
-document.querySelector('[wm-flappy]').appendChild(b.element)
+// const b = new PairOfBarriers(700, 200, 400)
+// document.querySelector('[wm-flappy]').appendChild(b.element)
+
+function Barriers(height, width, opening, space, notificatePoint) {
+    this.pairs = [
+        new PairOfBarriers(height, opening, width),
+        new PairOfBarriers(height, opening, width + space),
+        new PairOfBarriers(height, opening, width + space * 2),
+        new PairOfBarriers(height, opening, width + space * 3)
+    ]
+
+    const displacement = 3
+    this.animate = () => {
+        this.pairs.forEach(pair => {
+            pair.setX(pair.getX() - displacement)
+
+            //when the element leaves game area (width < 0)
+            if (pair.getX() < -pair.getWidth()) {
+                console.log(pair.getWidth())
+                pair.setX(pair.getX() + space * this.pairs.length)
+                pair.sortOpening()
+            }
+            
+            const middle = width / 2
+            const crossedMiddle = pair.getX() + displacement >= middle
+                && pair.getX() < middle
+            crossedMiddle && notificatePoint()
+            //this line above = if (crossedMiddle) {notificatePoint()}
+        })
+    }
+} 
+
+const barriers = new Barriers(700, 1100, 200, 400,)
+const gameArea = document.querySelector('[wm-flappy]')
+barriers.pairs.forEach(pair => gameArea.appendChild(pair.element))
+setInterval(() => {
+    barriers.animate()
+}, 20)
