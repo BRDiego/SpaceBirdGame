@@ -62,7 +62,6 @@ function Barriers(height, width, opening, space, notificatePoint) {
 
             //when the element leaves game area (width < 0)
             if (pair.getX() < -pair.getWidth()) {
-                console.log(pair.getWidth())
                 pair.setX(pair.getX() + space * this.pairs.length)
                 pair.sortOpening()
             }
@@ -70,15 +69,47 @@ function Barriers(height, width, opening, space, notificatePoint) {
             const middle = width / 2
             const crossedMiddle = pair.getX() + displacement >= middle
                 && pair.getX() < middle
-            crossedMiddle && notificatePoint()
-            //this line above = if (crossedMiddle) {notificatePoint()}
+            if (crossedMiddle) notificatePoint()
         })
     }
 } 
 
-const barriers = new Barriers(700, 1100, 200, 400,)
+function Bird(gameHeight) {
+    let flying = false
+
+    this.element = newElement('img', 'bird')
+    this.element.src = 'Imgs/passaro.png'
+
+    this.getY = () => parseInt(this.element.style.bottom.split('px')[0])
+    this.setY = y => this.element.style.bottom = `${y}px`
+
+    window.onkeydown = e => flying = true
+    window.onkeyup = e => flying = false
+
+    this.animate = () => {
+        const generateY = this.getY() + (flying ? 8 : -5)
+        const maxHeight = gameHeight - this.element.clientHeight
+
+        if (generateY <= 0)
+            this.setY(0)
+        else if (generateY >= maxHeight)
+            this.setY(maxHeight)
+        else
+            this.setY(generateY)
+    }
+
+    this.setY(gameHeight / 2)
+}
+
+
+
+const barriers = new Barriers(700, 1100, 200, 400)
+const bird = new Bird(700)
 const gameArea = document.querySelector('[wm-flappy]')
+
+gameArea.appendChild(bird.element)
 barriers.pairs.forEach(pair => gameArea.appendChild(pair.element))
 setInterval(() => {
     barriers.animate()
+    bird.animate()
 }, 20)
