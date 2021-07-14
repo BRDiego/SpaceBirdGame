@@ -87,29 +87,61 @@ function Bird(gameHeight) {
     window.onkeyup = e => flying = false
 
     this.animate = () => {
-        const generateY = this.getY() + (flying ? 8 : -5)
+        const changeY = this.getY() + (flying ? 8 : -5)
         const maxHeight = gameHeight - this.element.clientHeight
 
-        if (generateY <= 0)
+        if (changeY <= 0)
             this.setY(0)
-        else if (generateY >= maxHeight)
+        else if (changeY >= maxHeight)
             this.setY(maxHeight)
         else
-            this.setY(generateY)
+            this.setY(changeY)
     }
 
     this.setY(gameHeight / 2)
 }
 
+// const barriers = new Barriers(700, 1100, 200, 400)
+// const bird = new Bird(700)
+// const gameArea = document.querySelector('[wm-flappy]')
 
+// gameArea.appendChild(bird.element)
+// barriers.pairs.forEach(pair => gameArea.appendChild(pair.element))
+// setInterval(() => {
+//     barriers.animate()
+//     bird.animate()
+// }, 20)
 
-const barriers = new Barriers(700, 1100, 200, 400)
-const bird = new Bird(700)
-const gameArea = document.querySelector('[wm-flappy]')
+function Progress() {
+    this.element = newElement('span', 'progress')
+    this.updatePoints = points => {
+        this.element.innerHTML = points
+    }
+    this.updatePoints(0)
+}
 
-gameArea.appendChild(bird.element)
-barriers.pairs.forEach(pair => gameArea.appendChild(pair.element))
-setInterval(() => {
-    barriers.animate()
-    bird.animate()
-}, 20)
+function FlappyBird() {
+    let points = 0
+
+    const gameArea = document.querySelector('[wm-flappy]')
+    const height = gameArea.clientHeight
+    const width = gameArea.clientWidth
+
+    const progress = new Progress()
+    const barriers = new Barriers(height, width, 200, 400,
+        () => progress.updatePoints(++points))
+    const bird = new Bird(height)
+
+    gameArea.appendChild(progress.element)
+    gameArea.appendChild(bird.element)
+    barriers.pairs.forEach(pair => gameArea.appendChild(pair.element))
+
+    this.start = () => {
+        const timer = setInterval(() => {
+            barriers.animate()
+            bird.animate()
+        }, 20)
+    }
+}
+
+new FlappyBird().start()
