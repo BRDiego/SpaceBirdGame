@@ -13,7 +13,7 @@ html {
 
 body {
     margin: 0;
-    background-color: #0D262D;
+    background-color: #191970;
     color: #fff;
     height: 100%;
     font-family: 'Arial';
@@ -29,11 +29,11 @@ body {
 
 [wm-flappy] {
     position: relative;
-    border: 5px solid dodgerblue;
+    border: 5px solid #fff;
     height: 700px;
     width: 1200px;
     margin: 15px;
-    background-color: deepskyblue;
+    background-color: #000;
     overflow: hidden;
 }
 
@@ -46,32 +46,32 @@ body {
 
 .pair-of-barriers {
     position: absolute;
-    top: 0;
-    height: 100%;
+    left: 0;
+    width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-between;
 }
 
 .barrier {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
 }
 
 .barrier .cover {
-    height: 30px;
-    width: 130px;
-    background: linear-gradient(90deg, #639301, #A5E82E);
-    border: 2px solid #000;
+    height: 170px;
+    width: 40px;
+    background: linear-gradient(90deg, #358D5B, #A7A9A8);
+    border: 3px solid #FFFF01;
 }
 
 .barrier .shape {
     height: 150px;
-    width: 110px;
-    background: linear-gradient(90deg, #639301, #A5E82E);
-    border-left: 2px solid #000;
-    border-right: 2px solid #000;
+    width: 300px;
+    background: linear-gradient(90deg, #01018B, #8B018B);
+    border-top: 3px solid #FFFF01;
+    border-bottom: 3px solid #FFFF01;
 }
 
 .progress {

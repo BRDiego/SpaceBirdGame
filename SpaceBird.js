@@ -13,85 +13,85 @@ function Barrier(reverse = false) {
     this.element.appendChild(reverse ? shape : cover)
     this.element.appendChild(reverse ? cover : shape)
 
-    this.setNewHeight = newHeight => shape.style.height = `${newHeight}px`
+    this.setNewWidth = newWidth => shape.style.width = `${newWidth}px`
 }
 
-function PairOfBarriers(height, opening, x) {
+function PairOfBarriers(width, opening, y) {
     this.element = newElement('div', 'pair-of-barriers')
 
-    this.upper = new Barrier(true)
-    this.lower = new Barrier(false)
+    this.leftSide = new Barrier(true)
+    this.rightSide = new Barrier(false)
 
-    this.element.appendChild(this.upper.element)
-    this.element.appendChild(this.lower.element)
+    this.element.appendChild(this.leftSide.element)
+    this.element.appendChild(this.rightSide.element)
 
     this.sortOpening = () => {
-        const upperHeight = Math.random() * (height - opening)
-        const lowerHeight = height - opening - upperHeight
-        this.upper.setNewHeight(upperHeight)
-        this.lower.setNewHeight(lowerHeight)
+        const leftWidth = Math.random() * (width - opening)
+        const rightWidth = width - opening - leftWidth
+        this.leftSide.setNewWidth(leftWidth)
+        this.rightSide.setNewWidth(rightWidth)
     }
 
-    this.getX = () => parseInt(this.element.style.left.split('px')[0])
-    this.setX = x => this.element.style.left = `${x}px`
-    this.getWidth = () => this.element.clientWidth
+    this.getY = () => parseInt(this.element.style.bottom.split('px')[0])
+    this.setY = y => this.element.style.bottom = `${y}px`
+    this.getHeight = () => this.element.clientHeight
 
     this.sortOpening()
-    this.setX(x)
+    this.setY(y)
 }
 
-function PairSet(height, width, opening, space, notificatePoint) {
+function PairSet(width, height, opening, space, notificatePoint) {
     this.pairs = [
-        new PairOfBarriers(height, opening, width),
-        new PairOfBarriers(height, opening, width + space),
-        new PairOfBarriers(height, opening, width + space * 2),
-        new PairOfBarriers(height, opening, width + space * 3)
+        new PairOfBarriers(width, opening, height),
+        new PairOfBarriers(width, opening, height + space),
+        new PairOfBarriers(width, opening, height + space * 2),
+        new PairOfBarriers(width, opening, height + space * 3)
     ]
 
     const displacement = 3
     this.animate = () => {
         this.pairs.forEach(pair => {
-            pair.setX(pair.getX() - displacement)
+            pair.setY(pair.getY() - displacement)
 
             //when the element leaves game area (width < 0)
-            if (pair.getX() < -pair.getWidth()) {
-                pair.setX(pair.getX() + space * this.pairs.length)
+            if (pair.getY() < -pair.getHeight()) {
+                pair.setY(pair.getY() + space * this.pairs.length)
                 pair.sortOpening()
             }
             
-            const middle = width / 2
-            const crossedMiddle = pair.getX() + displacement >= middle
-                && pair.getX() < middle
+            const middle = height / 2
+            const crossedMiddle = pair.getY() + displacement >= middle
+                && pair.getY() < middle
             if (crossedMiddle) notificatePoint()
         })
     }
 } 
 
-function Bird(gameHeight) {
+function Bird(gameWidth) {
     let flying = false
 
     this.element = newElement('img', 'bird')
     this.element.src = 'Imgs/passaro.png'
 
-    this.getY = () => parseInt(this.element.style.bottom.split('px')[0])
-    this.setY = y => this.element.style.bottom = `${y}px`
+    this.getX = () => parseInt(this.element.style.left.split('px')[0])
+    this.setX = x => this.element.style.left = `${x}px`
 
     window.onkeydown = e => flying = true
     window.onkeyup = e => flying = false
 
     this.animate = () => {
-        const changeY = this.getY() + (flying ? 8 : -5)
-        const maxHeight = gameHeight - this.element.clientHeight
+        const changeX = this.getX() + (flying ? 8 : -8)
+        const maxWidth = gameWidth - this.element.clientWidth
 
-        if (changeY <= 0)
-            this.setY(0)
-        else if (changeY >= maxHeight)
-            this.setY(maxHeight)
+        if (changeX <= 0)
+            this.setX(0)
+        else if (changeX >= maxWidth)
+            this.setX(maxWidth)
         else
-            this.setY(changeY)
+            this.setX(changeX)
     }
 
-    this.setY(gameHeight / 2)
+    this.setX(gameWidth / 2)
 }
 
 function areOverlaid(elementA, elementB) {
@@ -110,14 +110,15 @@ function colided(bird, pairSet) {
     let colided = false
     pairSet.pairs.forEach(pairOfBarriers => {
         if (!colided) {
-            const upper = pairOfBarriers.upper.element
-            const lower = pairOfBarriers.lower.element
-            colided = areOverlaid(bird.element, upper)
-                || areOverlaid(bird.element, lower)
+            const leftSide = pairOfBarriers.leftSide.element
+            const rightSide = pairOfBarriers.rightSide.element
+            colided = areOverlaid(bird.element, leftSide)
+                || areOverlaid(bird.element, rightSide)
         }
     })
     return colided
 }
+
 
 function Progress() {
     this.element = newElement('span', 'progress')
@@ -131,19 +132,20 @@ function FlappyBird() {
     let points = 0
 
     const gameArea = document.querySelector('[wm-flappy]')
-    const height = gameArea.clientHeight
     const width = gameArea.clientWidth
+    const height = gameArea.clientHeight
 
     const progress = new Progress()
-    const pairSet = new PairSet(height, width, 200, 400,
+    const pairSet = new PairSet(width, height, 300, 600,
         () => progress.updatePoints(++points))
-    const bird = new Bird(height)
+    const bird = new Bird(width)
 
     gameArea.appendChild(progress.element)
     gameArea.appendChild(bird.element)
     pairSet.pairs.forEach(pair => gameArea.appendChild(pair.element))
 
     this.start = () => {
+        
         const timer = setInterval(() => {
             pairSet.animate()
             bird.animate()
