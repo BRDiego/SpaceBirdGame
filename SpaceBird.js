@@ -13,7 +13,12 @@ function Barrier(reverse = false) {
     this.element.appendChild(reverse ? shape : cover)
     this.element.appendChild(reverse ? cover : shape)
 
+    const bg = newElement('img', 'draw')
+    bg.src = 'Imgs/drawing1.png'
+    shape.appendChild(bg)
+    
     this.setNewWidth = newWidth => shape.style.width = `${newWidth}px`
+    this.setBg = nW => bg.style.width =  `${nW}px`
 }
 
 function PairOfBarriers(width, opening, y) {
@@ -30,6 +35,9 @@ function PairOfBarriers(width, opening, y) {
         const rightWidth = width - opening - leftWidth
         this.leftSide.setNewWidth(leftWidth)
         this.rightSide.setNewWidth(rightWidth)
+        this.leftSide.setBg(leftWidth)
+        this.rightSide.setBg(rightWidth)
+
     }
 
     this.getY = () => parseInt(this.element.style.bottom.split('px')[0])
@@ -59,7 +67,7 @@ function PairSet(width, height, opening, space, notificatePoint) {
                 pair.sortOpening()
             }
             
-            const middle = height / 2
+            const middle = height / 2 - 140
             const crossedMiddle = pair.getY() + displacement >= middle
                 && pair.getY() < middle
             if (crossedMiddle) notificatePoint()
@@ -119,7 +127,6 @@ function colided(bird, pairSet) {
     return colided
 }
 
-
 function Progress() {
     this.element = newElement('span', 'progress')
     this.updatePoints = points => {
@@ -139,13 +146,12 @@ function FlappyBird() {
     const pairSet = new PairSet(width, height, 300, 600,
         () => progress.updatePoints(++points))
     const bird = new Bird(width)
-
+    
     gameArea.appendChild(progress.element)
     gameArea.appendChild(bird.element)
     pairSet.pairs.forEach(pair => gameArea.appendChild(pair.element))
 
     this.start = () => {
-        
         const timer = setInterval(() => {
             pairSet.animate()
             bird.animate()

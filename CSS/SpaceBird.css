@@ -37,6 +37,16 @@ body {
     overflow: hidden;
 }
 
+.bg {
+    height : 700px;
+    width : 1200px;
+}
+
+.draw {
+    height: 143px;
+    width: 300px;
+}
+
 .bird {
     position: absolute;
     width: 60px;
@@ -63,15 +73,15 @@ body {
     height: 170px;
     width: 40px;
     background: linear-gradient(90deg, #358D5B, #A7A9A8);
-    border: 3px solid #FFFF01;
+    border: 3px solid darkblue;
 }
 
 .barrier .shape {
     height: 150px;
     width: 300px;
     background: linear-gradient(90deg, #01018B, #8B018B);
-    border-top: 3px solid #FFFF01;
-    border-bottom: 3px solid #FFFF01;
+    border-top: 3px solid darkblue;
+    border-bottom: 3px solid darkblue;
 }
 
 .progress {
