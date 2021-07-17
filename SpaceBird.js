@@ -13,12 +13,7 @@ function Barrier(reverse = false) {
     this.element.appendChild(reverse ? shape : cover)
     this.element.appendChild(reverse ? cover : shape)
 
-    const bg = newElement('img', 'draw')
-    bg.src = 'Imgs/drawing1.png'
-    shape.appendChild(bg)
-    
     this.setNewWidth = newWidth => shape.style.width = `${newWidth}px`
-    this.setBg = nW => bg.style.width =  `${nW}px`
 }
 
 function PairOfBarriers(width, opening, y) {
@@ -35,9 +30,6 @@ function PairOfBarriers(width, opening, y) {
         const rightWidth = width - opening - leftWidth
         this.leftSide.setNewWidth(leftWidth)
         this.rightSide.setNewWidth(rightWidth)
-        this.leftSide.setBg(leftWidth)
-        this.rightSide.setBg(rightWidth)
-
     }
 
     this.getY = () => parseInt(this.element.style.bottom.split('px')[0])
@@ -73,13 +65,45 @@ function PairSet(width, height, opening, space, notificatePoint) {
             if (crossedMiddle) notificatePoint()
         })
     }
-} 
+}
+
+function Galaxy(n) {
+    this.element = newElement('img', 'galaxy')
+    this.element.src = `imgs/galaxy${n}.png`
+
+    this.element.style.bottom = "700px"
+
+    this.getY = () => parseInt(this.element.style.bottom.split('px')[0])
+    this.setY = y => this.element.style.bottom = `${y}px`
+    this.getHeight = () => this.element.clientHeight
+}
+
+function Voiding() {
+    this.galaxys = [
+        new Galaxy(1),
+        new Galaxy(2),
+        new Galaxy(1)
+    ]
+
+    const displacement = 25
+    this.animate = () => {
+        
+        this.galaxys.forEach(g => {
+            
+            g.setY(g.getY() - displacement)
+            
+            if (g.getY() < 0 ){
+                g.setY(1400)
+            }
+        })
+    }
+}
 
 function Bird(gameWidth) {
     let flying = false
 
     this.element = newElement('img', 'bird')
-    this.element.src = 'Imgs/passaro.png'
+    this.element.src = 'Imgs/passaro1.png'
 
     this.getX = () => parseInt(this.element.style.left.split('px')[0])
     this.setX = x => this.element.style.left = `${x}px`
@@ -89,6 +113,8 @@ function Bird(gameWidth) {
 
     this.animate = () => {
         const changeX = this.getX() + (flying ? 8 : -8)
+        const n = flying ? 1 : 2
+        this.element.src = `imgs/passaro${n}.png`
         const maxWidth = gameWidth - this.element.clientWidth
 
         if (changeX <= 0)
@@ -142,6 +168,9 @@ function FlappyBird() {
     const width = gameArea.clientWidth
     const height = gameArea.clientHeight
 
+    const empt = new Voiding()
+    empt.galaxys.forEach(g => gameArea.appendChild(g.element))
+
     const progress = new Progress()
     const pairSet = new PairSet(width, height, 300, 600,
         () => progress.updatePoints(++points))
@@ -155,6 +184,7 @@ function FlappyBird() {
         const timer = setInterval(() => {
             pairSet.animate()
             bird.animate()
+            empt.animate()
 
             if (colided(bird, pairSet)){
                 clearInterval(timer)
