@@ -71,29 +71,49 @@ function Galaxy(n) {
     this.element = newElement('img', 'galaxy')
     this.element.src = `imgs/galaxy${n}.png`
 
-    this.element.style.bottom = "700px"
+    this.element.style.bottom = "1000px"
 
     this.getY = () => parseInt(this.element.style.bottom.split('px')[0])
     this.setY = y => this.element.style.bottom = `${y}px`
     this.getHeight = () => this.element.clientHeight
+    
+    let mark = 0
+    this.element.style.zoom = '100%'
+    let zoom = parseInt(this.element.style.zoom.split('%'))
+    this.testZoom = () => {
+        // const take = this.galaxys[1]
+        if (zoom > 300)
+            mark = 1
+        if (zoom < 70)
+            mark = 0
+        switch(mark){
+            case 1: zoom = zoom - 0.25; break;
+            case 0: zoom = zoom + 0.115; break;
+        }
+        this.element.style.zoom = `${zoom}%`
+    }
 }
 
-function Voiding() {
+function Travel() {
     this.galaxys = [
+        new Galaxy(2),
         new Galaxy(1),
         new Galaxy(2),
-        new Galaxy(1)
+        new Galaxy(2),
+        new Galaxy(2)
     ]
-
+    
+    let mark = 0
+         
     const displacement = 25
     this.animate = () => {
-        
+
         this.galaxys.forEach(g => {
-            
+            g.testZoom()
             g.setY(g.getY() - displacement)
             
             if (g.getY() < 0 ){
-                g.setY(1400)
+                g.setY(2100)
             }
         })
     }
@@ -161,14 +181,19 @@ function Progress() {
     this.updatePoints(0)
 }
 
+
 function FlappyBird() {
     let points = 0
 
+    const body = document.querySelector('body')
+    body.style.backgroundSize = '100%'
+    let zoom = parseInt(body.style.backgroundSize.split('%'))
+    
     const gameArea = document.querySelector('[wm-flappy]')
     const width = gameArea.clientWidth
     const height = gameArea.clientHeight
 
-    const empt = new Voiding()
+    const empt = new Travel()
     empt.galaxys.forEach(g => gameArea.appendChild(g.element))
 
     const progress = new Progress()
@@ -181,11 +206,15 @@ function FlappyBird() {
     pairSet.pairs.forEach(pair => gameArea.appendChild(pair.element))
 
     this.start = () => {
+        
         const timer = setInterval(() => {
             pairSet.animate()
             bird.animate()
             empt.animate()
-
+            --zoom
+            //body.style.backgroundSize = `${zoom}%` 
+            //console.log(zoom)
+            
             if (colided(bird, pairSet)){
                 clearInterval(timer)
             }
@@ -193,4 +222,27 @@ function FlappyBird() {
     }
 }
 
+function Derive() {
+    const body = document.querySelector('body')
+    body.style.backgroundSize = '100%'
+    let zoom = parseInt(body.style.backgroundSize.split('%'))
+
+    this.start = () => {
+        let mark = 0
+        const timer = setInterval(() => {
+            if (zoom > 160)
+                mark = 1
+            if (zoom < 90)
+                mark = 0
+            switch(mark){
+                case 1: zoom = zoom - 0.055; break;
+                case 0: zoom = zoom + 0.055; break;
+            }
+            body.style.backgroundSize = `${zoom}%`
+        }, 20)
+    }
+}
+
+new Derive().start()
 new FlappyBird().start()
+
